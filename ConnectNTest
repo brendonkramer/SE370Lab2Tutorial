@@ -1,0 +1,15 @@
+package edu.dselent.assignment00;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class ConnectNTest {
+
+    @org.junit.jupiter.api.Test
+    void detectWin() {
+    return false;
+    }
+
+    @org.junit.jupiter.api.Test
+    void switchTurn() {
+    }
+}
