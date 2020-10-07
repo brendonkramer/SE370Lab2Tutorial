@@ -1,0 +1,292 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package edu.dselent.assignment00;
+
+public class ConnectN {
+    private static final int DEFAULT_COLUMNS = 7;
+    private static final int DEFAULT_ROWS = 6;
+    private static final int DEFAULT_WINNING_NUMBER = 4;
+    private int[][] gameState;
+    private int lastColumn;
+    private int lastRow;
+    private int numberOfColumns;
+    private int numberOfRows;
+    private int playerTurn;
+    private int winningNumber;
+
+    public ConnectN(int numberOfRows, int numberOfColumns, int winningNumber) {
+        this.numberOfColumns = numberOfColumns;
+        this.numberOfRows = numberOfRows;
+        this.winningNumber = winningNumber;
+        this.gameState = new int[numberOfRows][numberOfColumns];
+        this.playerTurn = 1;
+        this.lastRow = -1;
+        this.lastColumn = -1;
+    }
+
+    public ConnectN() {
+        this.numberOfRows = 6;
+        this.numberOfColumns = 7;
+        this.winningNumber = 4;
+        this.lastRow = -1;
+        this.lastColumn = -1;
+        this.gameState = new int[this.numberOfRows][this.numberOfColumns];
+        this.playerTurn = 1;
+    }
+
+    public void resetGame() {
+        this.playerTurn = 1;
+        this.lastColumn = -1;
+        this.lastRow = -1;
+        this.setBoardZero();
+    }
+
+    public int getPlayerTurn() {
+        return this.playerTurn;
+    }
+
+    public boolean insertChip(int columnNumber) {
+        int r = 0;
+        if (this.gameState[r][columnNumber] != 0) {
+            return false;
+        } else {
+            for(int i = r; i <= this.numberOfRows - 2; ++i) {
+                if (this.gameState[i + 1][columnNumber] != 0) {
+                    this.gameState[i][columnNumber] = this.playerTurn;
+                    this.lastRow = i;
+                    this.lastColumn = columnNumber;
+                    return true;
+                }
+
+                if (i == this.numberOfRows - 2) {
+                    ++i;
+                    this.gameState[i][columnNumber] = this.playerTurn;
+                    this.lastRow = i;
+                    this.lastColumn = columnNumber;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public int detectWin() {
+        int checkWinColumns = this.detectWinColumns();
+        int checkWinRows = this.detectWinRows();
+        int checkWinDiagonals = this.detectWinDiagonals();
+        if (checkWinColumns != -1) {
+            return checkWinColumns;
+        } else {
+            return checkWinDiagonals != -1 ? checkWinDiagonals : checkWinRows;
+        }
+    }
+
+    private int detectWinColumns() {
+        int inARow = 0;
+
+        for(int r = 0; r < this.numberOfRows; ++r) {
+            if (this.gameState[r][this.lastColumn] == this.playerTurn) {
+                ++inARow;
+            } else {
+                inARow = 0;
+            }
+
+            if (inARow == this.winningNumber) {
+                return this.playerTurn;
+            }
+        }
+
+        return -1;
+    }
+
+    private int detectWinDiagonals() {
+        int checkLeftDown = this.detectWinDiagonalsLeftDown();
+        return checkLeftDown != -1 ? checkLeftDown : this.detectWinDiagonalsRightDown();
+    }
+
+    private int detectWinDiagonalsLeftDown() {
+        int startRow = this.lastRow;
+
+        int startCol;
+        for(startCol = this.lastColumn; startRow > 0 && startCol > 0; --startRow) {
+            --startCol;
+        }
+
+        int inARow;
+        int r;
+        int c;
+        if (startCol == 0) {
+            inARow = 0;
+            r = startCol;
+
+            for(c = startRow; c < this.numberOfRows; ++c) {
+                if (this.gameState[c][r] == this.playerTurn) {
+                    ++inARow;
+                } else {
+                    inARow = 0;
+                }
+
+                ++r;
+                if (inARow == this.winningNumber) {
+                    return this.playerTurn;
+                }
+            }
+
+            return -1;
+        } else {
+            inARow = 0;
+            r = startRow;
+
+            for(c = startCol; c < this.numberOfColumns; ++c) {
+                if (this.gameState[r][c] == this.playerTurn) {
+                    ++inARow;
+                } else {
+                    inARow = 0;
+                }
+
+                ++r;
+                if (inARow == this.winningNumber) {
+                    return this.playerTurn;
+                }
+            }
+
+            return -1;
+        }
+    }
+
+    private int detectWinDiagonalsRightDown() {
+        int startRow = this.lastRow;
+
+        int startCol;
+        for(startCol = this.lastColumn; startRow > 0 && startCol < this.numberOfColumns - 1; --startRow) {
+            ++startCol;
+        }
+
+        int inARow = 0;
+        int r;
+        int c;
+        if (startRow != 0) {
+            r = startCol;
+
+            for(c = startRow; c < this.numberOfRows - 1; ++c) {
+                if (this.gameState[c][r] == this.playerTurn) {
+                    ++inARow;
+                } else {
+                    inARow = 0;
+                }
+
+                --r;
+                if (inARow == this.winningNumber) {
+                    return this.playerTurn;
+                }
+            }
+
+            return -1;
+        } else {
+            r = startRow;
+
+            for(c = startCol; c > -1 && r < this.numberOfRows; ++r) {
+                if (this.gameState[r][c] == this.playerTurn) {
+                    ++inARow;
+                } else {
+                    inARow = 0;
+                }
+
+                if (inARow == this.winningNumber) {
+                    return this.playerTurn;
+                }
+
+                --c;
+            }
+
+            return -1;
+        }
+    }
+
+    private int detectWinRows() {
+        int inARow = 0;
+
+        for(int c = 0; c < this.numberOfColumns; ++c) {
+            if (this.gameState[this.lastRow][c] == this.playerTurn) {
+                ++inARow;
+            } else {
+                inARow = 0;
+            }
+
+            if (inARow == this.winningNumber) {
+                return this.playerTurn;
+            }
+        }
+
+        return -1;
+    }
+
+    public boolean isGameFull() {
+        for(int r = 0; r < this.numberOfRows; ++r) {
+            for(int c = 0; c < this.numberOfColumns; ++c) {
+                if (this.gameState[r][c] == 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void switchTurn() {
+        if (this.playerTurn == 1) {
+            this.playerTurn = 2;
+        } else {
+            this.playerTurn = 1;
+        }
+
+    }
+
+    public int[][] getGameState() {
+        return this.gameState;
+    }
+
+    public int getNumberOfRows() {
+        return this.numberOfRows;
+    }
+
+    public int getNumberOfColumns() {
+        return this.numberOfColumns;
+    }
+
+    public int getWinningNumber() {
+        return this.winningNumber;
+    }
+
+    public void setBoardZero() {
+        for(int r = 0; r < this.numberOfRows; ++r) {
+            for(int c = 0; c < this.numberOfColumns; ++c) {
+                this.gameState[r][c] = 0;
+            }
+        }
+
+    }
+
+    public String toString() {
+        String board = "";
+
+        for(int r = 0; r < this.numberOfRows; ++r) {
+            for(int c = 0; c < this.numberOfColumns; ++c) {
+                board = board + this.gameState[r][c];
+                if (c != this.numberOfColumns - 1) {
+                    board = board + " ";
+                }
+            }
+
+            if (r != this.numberOfRows - 1) {
+                board = board + "\n";
+            }
+        }
+
+        return board;
+    }
+}
